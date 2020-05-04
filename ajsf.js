@@ -77,26 +77,35 @@ Ajsf = {
 			negative = true;
 		}
 
-		var arr = attribute.split('.'), i = 0, prop, obj = app.context;
+		var indexRegex = /(.*?)\[([0-9]+)\]/g;
+		var arr = attribute.split('.'), i = 0, obj = app.context, result;
 
 		for(; i < arr.length - 1; i++) {
-			if (arr[i] !== undefined && obj[arr[i]] !== undefined) {
-				prop = arr[i];
-				obj = obj[prop];
+			var match = indexRegex.exec(arr[i]);
+			if (match !== null && obj[match[1]][match[2]] !== undefined) {
+				obj = obj[match[1]][match[2]];
+			} else if (obj[arr[i]] !== undefined) {
+				obj = obj[arr[i]];
 			}
 		}
 
-		if (val !== undefined) {
-			obj[arr[i]] = val;
-			return;
+		var match = indexRegex.exec(arr[i]);
+		if (match !== null) {
+			if (val !== undefined) {
+				obj[match[1]][match[2]] = val;
+				return;
+			}
+			result = obj[match[1]][match[2]];
+		} else {
+			if (val !== undefined) {
+				obj[arr[i]] = val;
+				return;
+			}
+			result = obj[arr[i]];
 		}
 
-		var result;
-
 		if (negative) {
-			result = !obj[arr[i]];
-		} else {
-			result = obj[arr[i]];
+			result = !result;
 		}
 
 		for (var j = 1; j < expression.length; j++) {
