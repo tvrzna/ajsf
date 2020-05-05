@@ -237,15 +237,50 @@ Ajsf = {
 					var $clone = $e.clone().removeAttr('ajsf-repeat').attr('ajsf-repeated', 'true').show().insertBefore($e);
 
 					var subapp = {
-						context: {}
+						context: {
+							parent: function() {
+								return app.context;
+							},
+							item: arr[item]
+						}
 					};
-					subapp.context.parent = JSON.parse(JSON.stringify(app.context));
-					subapp.context.item = arr[item];
+
 					subapp.context.item.index = item;
 					Ajsf.init(subapp, $clone);
 				}
 			}
 		});
+
+		for (var name in app.directives) {
+			var directive = app.directives[name];
+			el.find(name).each(function(i, e) {
+				$e = $(e);
+
+				var modelAttr = $e.attr('ajsf-model'), model = undefined;
+				if (modelAttr !== null) {
+					var model =  Ajsf.digObject(app, modelAttr);
+				}
+
+				$e.html(directive.template);
+
+				// FIXME: context is shared!
+				var subapp = {
+					context: {
+						model: model,
+						parent: function() {
+							return app.context;
+						},
+						refresh: function() {
+							Ajsf.refresh(subapp, $e);
+						}
+					}
+				};
+
+				subapp.context = Object.assign(subapp.context, directive.definition(subapp.context));
+				Ajsf.init(subapp, $e);
+			});
+
+		}
 	},
 	getVal: function(e) {
 		var $e = $(e);
@@ -290,18 +325,22 @@ Ajsf = {
 window.ajsf = function(selector, definition) {
 	var root = $('[ajsf="' + selector + '"]');
 
-	var instance = {};
-
-	instance.context = {
-		refresh: function() {
-			Ajsf.refresh(instance, root);
+	var instance = {
+		context: {},
+		directives: {},
+		directive: function(name, template, definition) {
+			this.directives[name] = {
+				'template': template,
+				'definition': definition
+			};
 		}
 	};
 
-	var def = definition(instance.context);
-	for (var key in def) {
-		instance.context[key] = def[key];
-	}
+	instance.context.refresh = function() {
+		Ajsf.refresh(instance, root);
+	};
+
+	instance.context = Object.assign(instance.context, definition(instance.context));
 
 	$(document).ready(function() {
 		Ajsf.init(instance, root);
