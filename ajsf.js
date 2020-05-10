@@ -242,7 +242,8 @@ Ajsf = {
 								return app.context;
 							},
 							item: arr[item]
-						}
+						},
+						directives: app.directives
 					};
 
 					subapp.context.item.index = item;
@@ -253,7 +254,8 @@ Ajsf = {
 
 		for (var name in app.directives) {
 			var directive = app.directives[name];
-			el.find(name).each(function(i, e) {
+
+			var applyDirective = function(e) {
 				$e = $(e);
 
 				var modelAttr = $e.attr('ajsf-model'), model = undefined;
@@ -273,13 +275,28 @@ Ajsf = {
 						refresh: function() {
 							Ajsf.refresh(subapp, $e);
 						}
-					}
+					},
+					directives: app.directives
 				};
 
-				subapp.context = Object.assign(subapp.context, directive.definition(subapp.context));
+				if (directive.definition !== undefined) {
+					subapp.context = Object.assign(subapp.context, directive.definition(subapp.context));
+				}
 				Ajsf.init(subapp, $e);
-			});
+			}
 
+			if (el.prop('tagName') === name.toUpperCase() ||  el.attr('ajsf-repeat') !== null || el.attr('ajsf-repeated') !== null) {
+				if (el.html() === '') {
+					applyDirective(el[0]);
+				}
+			} else {
+				el.find(name).each(function(i, e) {
+					var $e = $(e);
+					if ($e.html() === '' && $e.attr('ajsf-repeat') === null && $e.attr('ajsf-repeated') === null) {
+						applyDirective(e);
+					}
+				});
+			}
 		}
 	},
 	getVal: function(e) {
