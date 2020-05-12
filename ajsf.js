@@ -21,7 +21,7 @@ Ajsf = {
 					case "url":
 					case "search":
 					case "number":
-						event = "keydown";
+						event = "input";
 						break;
 					case "submit":
 						break;
@@ -31,10 +31,8 @@ Ajsf = {
 
 				if (event !== undefined) {
 					$e.on(event, function() {
-						setTimeout(function() {
-							Ajsf.digObject(app, attr, Ajsf.getVal(e));
-							Ajsf.refresh(app, el, attr);
-						}, 0);
+						Ajsf.digObject(app, attr, Ajsf.getVal(e));
+						Ajsf.refresh(app, el, attr);
 					});
 				}
 			}
