@@ -12,21 +12,25 @@ Ajsf = {
 			if (Ajsf.digObject(app, attr) === undefined) {
 				Ajsf.digObject(app, attr, '');
 			}
-			if ($e.prop('tagName') === 'INPUT') {
+			if ($e.prop('tagName') === 'INPUT' || $e.prop('tagName') === 'TEXTAREA') {
 				var event;
-				switch ($e.prop('type')) {
-					case "text":
-					case "password":
-					case "email":
-					case "url":
-					case "search":
-					case "number":
-						event = "input";
-						break;
-					case "submit":
-						break;
-					default:
-						event = "change";
+				if ($e.prop('tagName') === 'TEXTAREA') {
+					event = "input";
+				} else {
+					switch ($e.prop('type')) {
+						case "text":
+						case "password":
+						case "email":
+						case "url":
+						case "search":
+						case "number":
+							event = "input";
+							break;
+						case "submit":
+							break;
+						default:
+							event = "change";
+					}
 				}
 
 				if (event !== undefined) {
