@@ -258,7 +258,7 @@ Ajsf = {
 			var directive = app.directives[name];
 
 			var applyDirective = function(e) {
-				$e = $(e);
+				var $e = $(e);
 
 				var modelAttr = $e.attr('ajsf-model'), model = undefined;
 				if (modelAttr !== null) {
@@ -267,7 +267,6 @@ Ajsf = {
 
 				$e.html(directive.template);
 
-				// FIXME: context is shared!
 				var subapp = {
 					context: {
 						model: model,
