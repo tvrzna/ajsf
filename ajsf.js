@@ -282,7 +282,7 @@ Ajsf = {
 				};
 
 				if (directive.definition !== undefined) {
-					subapp.context = Object.assign(subapp.context, directive.definition(subapp.context));
+					subapp.context = Object.assign(subapp.context, directive.definition(subapp.context, e));
 				}
 				Ajsf.init(subapp, $e);
 			}
