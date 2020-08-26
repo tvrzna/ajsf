@@ -273,7 +273,11 @@ Ajsf = {
 						parent: function() {
 							return app.context;
 						},
-						refresh: function() {
+						refresh: function(skipOnRefresh) {
+							if (!skipOnRefresh && typeof subapp.context.onRefresh === "function")
+							{
+								subapp.context.onRefresh();
+							}
 							Ajsf.refresh(subapp, $e);
 						}
 					},
