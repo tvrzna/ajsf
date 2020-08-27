@@ -255,6 +255,9 @@ Ajsf = {
 		});
 
 		for (var name in app.directives) {
+			if (app.context.directiveInstances === undefined) {
+				app.context.directiveInstances = [];
+			}
 			var directive = app.directives[name];
 
 			var applyDirective = function(e) {
@@ -288,6 +291,7 @@ Ajsf = {
 					subapp.context = Object.assign(subapp.context, directive.definition(subapp.context, e));
 				}
 				Ajsf.init(subapp, $e);
+				app.context.directiveInstances.push(subapp);
 			}
 
 			if (el.prop('tagName') === name.toUpperCase() ||  el.attr('ajsf-repeat') !== null || el.attr('ajsf-repeated') !== null) {
@@ -301,6 +305,11 @@ Ajsf = {
 						applyDirective(e);
 					}
 				});
+			}
+		}
+		for (var i in app.context.directiveInstances) {
+			if (app.context.directiveInstances[i] !== undefined && app.context.directiveInstances[i].context !== undefined) {
+				app.context.directiveInstances[i].context.refresh();
 			}
 		}
 	},
