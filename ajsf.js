@@ -74,40 +74,51 @@ Ajsf = {
 
 		var attribute = expression[0].trim();
 		var negative = false;
-		if (attribute.startsWith('!')) {
-			attribute = expression[0].substring(1).trim();
-			negative = true;
+		var isStatic = false;
+		var result;
+
+		if ((attribute.startsWith('\'') && attribute.endsWith('\'')) || (attribute.startsWith('"') && attribute.endsWith('"'))) {
+			isStatic = true;
+			result = attribute.substring(1, attribute.length - 1);
 		}
 
-		var indexRegex = /(.*?)\[([0-9]+)\]/g;
-		var arr = attribute.split('.'), i = 0, obj = app.context, result;
+		if (!isStatic) {
+			if (attribute.startsWith('!')) {
+				attribute = expression[0].substring(1).trim();
+				negative = true;
+			}
 
-		for(; i < arr.length - 1; i++) {
+
+			var indexRegex = /(.*?)\[([0-9]+)\]/g;
+			var arr = attribute.split('.'), i = 0, obj = app.context;
+
+			for(; i < arr.length - 1; i++) {
+				var match = indexRegex.exec(arr[i]);
+				if (match !== null && obj[match[1]][match[2]] !== undefined) {
+					obj = obj[match[1]][match[2]];
+				} else if (obj[arr[i]] !== undefined) {
+					obj = obj[arr[i]];
+				}
+			}
+
 			var match = indexRegex.exec(arr[i]);
-			if (match !== null && obj[match[1]][match[2]] !== undefined) {
-				obj = obj[match[1]][match[2]];
-			} else if (obj[arr[i]] !== undefined) {
-				obj = obj[arr[i]];
+			if (match !== null) {
+				if (val !== undefined) {
+					obj[match[1]][match[2]] = val;
+					return;
+				}
+				result = obj[match[1]][match[2]];
+			} else {
+				if (val !== undefined) {
+					obj[arr[i]] = val;
+					return;
+				}
+				result = obj[arr[i]];
 			}
-		}
 
-		var match = indexRegex.exec(arr[i]);
-		if (match !== null) {
-			if (val !== undefined) {
-				obj[match[1]][match[2]] = val;
-				return;
+			if (negative) {
+				result = !result;
 			}
-			result = obj[match[1]][match[2]];
-		} else {
-			if (val !== undefined) {
-				obj[arr[i]] = val;
-				return;
-			}
-			result = obj[arr[i]];
-		}
-
-		if (negative) {
-			result = !result;
 		}
 
 		for (var j = 1; j < expression.length; j++) {
