@@ -142,6 +142,12 @@ Ajsf = {
 			}
 		}
 
+		for (var name in app.filters) {
+			if (name.toLowerCase() === method.toLowerCase()) {
+				return app.filters[name].definition(value, param);
+			}
+		}
+
 		switch (method.toLowerCase()) {
 			case 'gt':
 				return value > param;
@@ -245,7 +251,8 @@ Ajsf = {
 							},
 							item: arr[item]
 						},
-						directives: app.directives
+						directives: app.directives,
+						filters: app.filters
 					};
 
 					subapp.context.item.index = item;
@@ -284,7 +291,8 @@ Ajsf = {
 							Ajsf.refresh(subapp, $e);
 						}
 					},
-					directives: app.directives
+					directives: app.directives,
+					filters: app.filters
 				};
 
 				if (directive.definition !== undefined) {
@@ -361,7 +369,15 @@ window.ajsf = function(selector, definition) {
 		directives: {},
 		directive: function(name, template, definition) {
 			this.directives[name] = {
+				'name': name,
 				'template': template,
+				'definition': definition
+			};
+		},
+		filters: {},
+		filter: function(name, definition) {
+			this.filters[name] = {
+				'name': name,
 				'definition': definition
 			};
 		}
