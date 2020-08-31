@@ -144,7 +144,8 @@ Ajsf = {
 
 		for (var name in app.filters) {
 			if (name.toLowerCase() === method.toLowerCase()) {
-				return app.filters[name].definition(value, param);
+				var ctx = app.context.parent !== undefined ? app.context.parent() : app.context;
+				return app.filters[name].definition(ctx, value, param);
 			}
 		}
 
