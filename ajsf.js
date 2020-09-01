@@ -314,7 +314,7 @@ Ajsf = {
 				app.context.directiveInstances.push(subapp);
 			}
 
-			if (el.prop('tagName') === name.toUpperCase() ||  el.attr('ajsf-repeat') !== null || el.attr('ajsf-repeated') !== null) {
+			if (el.prop('tagName') === name.toUpperCase() && (el.attr('ajsf-repeat') !== null || el.attr('ajsf-repeated') !== null)) {
 				if (el.html() === '') {
 					applyDirective(el[0]);
 				}
