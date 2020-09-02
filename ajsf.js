@@ -192,19 +192,21 @@ Ajsf = {
 		}
 
 		el.find(prefix + '[ajsf-bind' + suffix +']').each(function(i, e) {
+			var cpyAttr = attr;
 			if (suffix === '') {
-				attr = $(e).attr('ajsf-bind');
+				cpyAttr = $(e).attr('ajsf-bind');
 			}
-			Ajsf.setVal(e, Ajsf.digObject(app, attr));
+			Ajsf.setVal(e, Ajsf.digObject(app, cpyAttr));
 		});
 
 		el.find(prefix + '[ajsf-hide' + suffix + ']').each(function(i, e) {
 			var $e = $(e);
 
+			var cpyAttr = attr;
 			if (suffix === '') {
-				attr = $e.attr('ajsf-hide');
+				cpyAttr = $e.attr('ajsf-hide');
 			}
-			if (Ajsf.digObject(app, attr)) {
+			if (Ajsf.digObject(app, cpyAttr)) {
 				$e.hide();
 			} else {
 				$e.show();
@@ -214,10 +216,11 @@ Ajsf = {
 		el.find(prefix + '[ajsf-show' + suffix + ']').each(function(i, e) {
 			var $e = $(e);
 
+			var cpyAttr = attr;
 			if (suffix === '') {
-				attr = $e.attr('ajsf-show');
+				cpyAttr = $e.attr('ajsf-show');
 			}
-			if (Ajsf.digObject(app, attr)) {
+			if (Ajsf.digObject(app, cpyAttr)) {
 				$e.show();
 			} else {
 				$e.hide();
@@ -226,17 +229,17 @@ Ajsf = {
 
 		el.find(prefix + '[ajsf-class]').each(function(i, e) {
 			var $e = $(e);
-			attr = JSON.parse(JSON.stringify(eval('(' + $e.attr('ajsf-class') + ')')));
+			var cpyAttr = JSON.parse(JSON.stringify(eval('(' + $e.attr('ajsf-class') + ')')));
 
-			for (var key in attr) {
+			for (var key in cpyAttr) {
 				var value = Ajsf.digObject(app, key);
 
 				if (value) {
-					if (!$e.hasClass(attr[key])) {
-						$e.addClass(attr[key]);
+					if (!$e.hasClass(cpyAttr[key])) {
+						$e.addClass(cpyAttr[key]);
 					}
 				} else {
-					$e.removeClass(attr[key]);
+					$e.removeClass(cpyAttr[key]);
 				}
 			}
 		});
@@ -245,13 +248,23 @@ Ajsf = {
 			$(e).remove();
 		});
 
+		el.find(prefix + '[ajsf-title' + suffix + ']').each(function(i, e) {
+			var $e = $(e);
+			var cpyAttr = attr;
+			if (suffix === '') {
+				cpyAttr = $e.attr('ajsf-title');
+			}
+			$e.attr('title', Ajsf.digObject(app, cpyAttr));
+		});
+
 		el.find(prefix + '[ajsf-repeat' + suffix + ']').each(function(i, e) {
 			var $e = $(e);
+			var customAttr = attr;
 			$e.hide();
 			if (suffix === '') {
-				attr = $e.attr('ajsf-repeat');
+				customAttr = $e.attr('ajsf-repeat');
 			}
-			var arr = Ajsf.digObject(app, attr);
+			var arr = Ajsf.digObject(app, customAttr);
 			if (arr !== undefined) {
 				for (var item in arr) {
 					var $clone = $e.clone().removeAttr('ajsf-repeat').attr('ajsf-repeated', 'true').show().insertBefore($e);
