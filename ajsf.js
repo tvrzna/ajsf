@@ -286,6 +286,16 @@ Ajsf = {
 			}
 		});
 
+		for (var name in app.attributes) {
+			el.find(prefix + '[' + name + suffix + ']').each(function(i, e) {
+				var customAttr = attr;
+				if (suffix === '') {
+					customAttr = $(e).attr(name);
+				}
+				app.attributes[name].definition(e, Ajsf.digObject(app, customAttr), app.context);
+			});
+		}
+
 		for (var name in app.directives) {
 			if (app.context.directiveInstances === undefined) {
 				app.context.directiveInstances = [];
@@ -402,6 +412,13 @@ window.ajsf = function(selector, definition) {
 		filters: {},
 		filter: function(name, definition) {
 			this.filters[name] = {
+				'name': name,
+				'definition': definition
+			};
+		},
+		attributes: {},
+		attribute: function(name, definition) {
+			this.attributes[name] = {
 				'name': name,
 				'definition': definition
 			};
