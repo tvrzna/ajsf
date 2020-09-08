@@ -231,15 +231,15 @@ Ajsf = {
 			var $e = $(e);
 			var cpyAttr = JSON.parse(JSON.stringify(eval('(' + $e.attr('ajsf-class') + ')')));
 
-			for (var key in cpyAttr) {
-				var value = Ajsf.digObject(app, key);
+			for (var styleClass in cpyAttr) {
+				var value = Ajsf.digObject(app, cpyAttr[styleClass]);
 
 				if (value) {
-					if (!$e.hasClass(cpyAttr[key])) {
-						$e.addClass(cpyAttr[key]);
+					if (!$e.hasClass(styleClass)) {
+						$e.addClass(styleClass);
 					}
 				} else {
-					$e.removeClass(cpyAttr[key]);
+					$e.removeClass(styleClass);
 				}
 			}
 		});
