@@ -5,54 +5,13 @@ Tiny JavaScript Framework making web sites more vivid. Works with [nunjs](https:
 
 ---
 
-_Work in progress, stay tuned._
+See our handbook to understand, how to use the framework.
 
----
-
-### API
-##### ajsf
-_since 0.0.1_
-
-TODO
-
-##### ajsf-bind
-_since 0.0.1_
-
-TODO
-
-##### ajsf-change
-_since 0.0.1_
-
-TODO
-
-##### ajsf-class
-_since 0.0.1_
-
-TODO
-
-##### ajsf-click
-_since 0.0.1_
-
-TODO
-
-##### ajsf-hide
-_since 0.0.1_
-
-TODO
-
-##### ajsf-keyup
-_since 0.0.1_
-
-TODO
-
-##### ajsf-repeat
-_since 0.0.1_
-
-TODO
-
-##### ajsf-show
-_since 0.0.1_
-
-TODO
+- [01. Getting started](docs/01.getting-started.md)
+- [02. Built-in Attribute Directives](docs/02.builtin-attribute-directives.md)
+- [03. Built-in Filters](docs/03.builtin-filters.md)
+- [04. Custom Attribute Directives](docs/04.custom-attribute-directives.md)
+- [05. Custom Element Directives](docs/05.custom-element-directives.md)
+- [06. Custom Filters](docs/06.custom-filters.md)
 
 <div style="text-align: center;"><a href="https://xkcd.com/927/"><img src="https://imgs.xkcd.com/comics/standards.png" /></div>
