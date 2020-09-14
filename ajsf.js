@@ -277,7 +277,8 @@ Ajsf = {
 							item: arr[item]
 						},
 						directives: app.directives,
-						filters: app.filters
+						filters: app.filters,
+						attributes: app.attributes
 					};
 
 					subapp.context.item.index = item;
@@ -327,7 +328,8 @@ Ajsf = {
 						}
 					},
 					directives: app.directives,
-					filters: app.filters
+					filters: app.filters,
+					attributes: app.attributes
 				};
 
 				if (directive.definition !== undefined) {
