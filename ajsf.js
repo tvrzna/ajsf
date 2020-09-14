@@ -388,10 +388,8 @@ Ajsf = {
 				default:
 					$e.val(value);
 			}
-		} else if ($e.prop('tagName') === 'SPAN' || $e.prop('tagName') === 'DIV' || $e.prop('tagName') === 'P' || $e.prop('tagName') === 'BUTTON') {
-			$e.text(value);
 		} else {
-			console.warn('Report element ' + $e.prop('tagName') + ' was missed, please.');
+			$e.text(value);
 		}
 	}
 };
