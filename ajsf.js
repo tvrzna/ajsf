@@ -12,7 +12,7 @@ Ajsf = {
 			if (Ajsf.digObject(app, attr) === undefined) {
 				Ajsf.digObject(app, attr, '');
 			}
-			if ($e.prop('tagName') === 'INPUT' || $e.prop('tagName') === 'TEXTAREA') {
+			if ($e.prop('tagName') === 'INPUT' || $e.prop('tagName') === 'TEXTAREA' || $e.prop('tagName') === 'SELECT') {
 				var event;
 				if ($e.prop('tagName') === 'TEXTAREA') {
 					event = "input";
@@ -390,6 +390,8 @@ Ajsf = {
 				default:
 					$e.val(value);
 			}
+		} else if ($e.prop('tagName') === 'TEXTAREA' || $e.prop('tagName') === 'SELECT') {
+			$e.val(value);
 		} else {
 			$e.text(value);
 		}
