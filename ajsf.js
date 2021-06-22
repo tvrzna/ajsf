@@ -48,7 +48,8 @@ Ajsf = {
 				var attr = $e.attr(attrEvent);
 
 				$e.on(Ajsf.basicEvents[attrEvent], function(event) {
-					Ajsf.digObject(app, attr)(event, e);
+					var fce = Ajsf.digObject(app, attr, undefined, true);
+					fce[0](event, ...fce[1], $(this));
 				});
 			});
 		};
@@ -69,13 +70,14 @@ Ajsf = {
 		'ajsf-mouseup': 'mouseup',
 		'ajsf-submit': 'submit'
 	},
-	digObject: function(app, attr, val) {
+	digObject: function(app, attr, val, addArgs) {
 		var expression = attr.split('|');
 
 		var attribute = expression[0].trim();
 		var negative = false;
 		var isStatic = false;
 		var result;
+		var args = [];
 
 		if ((attribute.startsWith('\'') && attribute.endsWith('\'')) || (attribute.startsWith('"') && attribute.endsWith('"'))) {
 			isStatic = true;
@@ -88,6 +90,23 @@ Ajsf = {
 				negative = true;
 			}
 
+			if (addArgs && attribute.indexOf('(') >= 0 && attribute.lastIndexOf(')') >= attribute.indexOf('(')) {
+				var strArgs = attribute.substring(attribute.indexOf('(') + 1, attribute.lastIndexOf(')'));
+				attribute = attribute.substring(0, attribute.indexOf('('));
+
+				var argRegex = /((\w+\(.*\))|(['"]?\w+['"]?)),?/g;
+				var match;
+
+				while((match = argRegex.exec(strArgs)) != null)
+				{
+					var fce = Ajsf.digObject(app, match[1], val, true);
+					if (typeof fce[0] === 'function') {
+						args.push(fce[0](...fce[1]));
+					} else {
+						args.push(fce[0]);
+					}
+				}
+			}
 
 			var indexRegex = /(.*?)\[([0-9]+)\]/g;
 			var arr = attribute.split('.'), i = 0, obj = app.context;
@@ -127,6 +146,10 @@ Ajsf = {
 			}
 		}
 
+		if (addArgs)
+		{
+			return [result, args];
+		}
 		return result;
 	},
 	filter: function(app, expression, value) {
