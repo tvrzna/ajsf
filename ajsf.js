@@ -41,33 +41,33 @@ Ajsf = {
 				}
 			}
 		});
-		el.find('[ajsf-click]').each(function(i, e) {
-			var $e = $(e);
-			var attr = $e.attr('ajsf-click');
 
-			$e.on('click', function(event) {
-				Ajsf.digObject(app, attr)(event, e);
+		createEvent = function(attrEvent) {
+			el.find('[' + attrEvent + ']').each(function(i, e) {
+				var $e = $(e);
+				var attr = $e.attr(attrEvent);
+
+				$e.on(Ajsf.basicEvents[attrEvent], function(event) {
+					Ajsf.digObject(app, attr)(event, e);
+				});
 			});
-		});
+		};
 
-		el.find('[ajsf-keyup]').each(function(i, e) {
-			var $e = $(e);
-			var attr = $e.attr('ajsf-keyup');
+		for (var attrEvent in Ajsf.basicEvents) {
+			createEvent(attrEvent);
+		}
 
-			$e.on('keyup', function(event) {
-				Ajsf.digObject(app, attr)(event, e);
-			});
-		});
-
-		el.find('[ajsf-change]').each(function(i, e) {
-			var $e = $(e);
-			var attr = $e.attr('ajsf-change');
-
-			$e.on('change', function(event) {
-				Ajsf.digObject(app, attr)(event, e);
-			});
-		});
 		Ajsf.refresh(app, el);
+	},
+	basicEvents: {
+		'ajsf-blur': 'blur',
+		'ajsf-change': 'change',
+		'ajsf-click': 'click',
+		'ajsf-keydown': 'keydown',
+		'ajsf-keyup': 'keyup',
+		'ajsf-mousedown': 'mousedown',
+		'ajsf-mouseup': 'mouseup',
+		'ajsf-submit': 'submit'
 	},
 	digObject: function(app, attr, val) {
 		var expression = attr.split('|');
