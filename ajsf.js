@@ -208,6 +208,10 @@ Ajsf = {
 				return value != param;
 			case 'limit':
 				return value.slice(0, Number(param));
+			case 'and':
+				return value && param;
+			case 'or':
+				return value || param;
 			default:
 				console.warn('Filter ' + method + ' is not implemented yet.')
 				return value;
