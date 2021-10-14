@@ -49,7 +49,9 @@ Ajsf = {
 
 				$e.on(Ajsf.basicEvents[attrEvent], function(event) {
 					var fce = Ajsf.digObject(app, attr, undefined, true);
-					fce[0](event, ...fce[1], $(this));
+					if (typeof fce[0] === 'function') {
+						fce[0](event, ...fce[1], $(this));
+					}
 				});
 			});
 		};
