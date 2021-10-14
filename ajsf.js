@@ -76,6 +76,7 @@ Ajsf = {
 		var attribute = expression[0].trim();
 		var negative = false;
 		var isStatic = false;
+		var isFunction = false;
 		var result;
 		var args = [];
 
@@ -90,7 +91,8 @@ Ajsf = {
 				negative = true;
 			}
 
-			if (addArgs && attribute.indexOf('(') >= 0 && attribute.lastIndexOf(')') >= attribute.indexOf('(')) {
+			if (attribute.indexOf('(') >= 0 && attribute.lastIndexOf(')') >= attribute.indexOf('(')) {
+				isFunction = true;
 				var strArgs = attribute.substring(attribute.indexOf('(') + 1, attribute.lastIndexOf(')'));
 				attribute = attribute.substring(0, attribute.indexOf('('));
 
@@ -135,9 +137,18 @@ Ajsf = {
 				result = obj[arr[i]];
 			}
 
+			if (typeof result === 'function' && !addArgs && isFunction) {
+				result = result(args);
+			}
+
 			if (negative) {
 				result = !result;
 			}
+		}
+
+		if (addArgs)
+		{
+			return [result, args];
 		}
 
 		for (var j = 1; j < expression.length; j++) {
@@ -146,10 +157,7 @@ Ajsf = {
 			}
 		}
 
-		if (addArgs)
-		{
-			return [result, args];
-		}
+
 		return result;
 	},
 	filter: function(app, expression, value) {
