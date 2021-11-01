@@ -310,6 +310,15 @@ Ajsf = {
 			$e.attr('title', Ajsf.digObject(app, cpyAttr));
 		});
 
+		el.find(prefix + '[ajsf-text' + suffix + ']').each(function(i, e) {
+			var $e = $(e);
+			var cpyAttr = attr;
+			if (suffix === '') {
+				cpyAttr = $e.attr('ajsf-text');
+			}
+			$e.text(Ajsf.digObject(app, cpyAttr));
+		});
+
 		el.find(prefix + '[ajsf-repeat' + suffix + ']').each(function(i, e) {
 			var $e = $(e);
 			var customAttr = attr;
@@ -456,6 +465,9 @@ Ajsf = {
 			}
 		} else if ($e.prop('tagName') === 'TEXTAREA' || $e.prop('tagName') === 'SELECT') {
 			$e.val(value);
+		} else if ($e.prop('tagName') === 'OPTION') {
+			$e.attr('value', value);
+			$e.text(value);
 		} else {
 			$e.text(value);
 		}
