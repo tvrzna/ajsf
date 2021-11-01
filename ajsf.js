@@ -212,6 +212,10 @@ Ajsf = {
 				return value && param;
 			case 'or':
 				return value || param;
+			case 'prefix':
+				return param + value;
+			case 'suffix':
+				return value + param;
 			default:
 				console.warn('Filter ' + method + ' is not implemented yet.')
 				return value;
