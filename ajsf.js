@@ -88,9 +88,18 @@ Ajsf = {
 		}
 
 		if (!isStatic) {
+			var obj = app.context;
+
 			if (attribute.startsWith('!')) {
 				attribute = expression[0].substring(1).trim();
 				negative = true;
+			}
+
+			while (attribute.startsWith('parent().')) {
+				attribute = expression[0].substring(9).trim();
+				if (typeof obj.parent === 'function') {
+					obj = obj.parent();
+				}
 			}
 
 			if (attribute.indexOf('(') >= 0 && attribute.lastIndexOf(')') >= attribute.indexOf('(')) {
@@ -113,7 +122,7 @@ Ajsf = {
 			}
 
 			var indexRegex = /(.*?)\[([0-9]+)\]/g;
-			var arr = attribute.split('.'), i = 0, obj = app.context;
+			var arr = attribute.split('.'), i = 0;
 
 			for(; i < arr.length - 1; i++) {
 				var match = indexRegex.exec(arr[i]);
