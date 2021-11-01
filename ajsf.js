@@ -1,10 +1,10 @@
 /**
-	ajsf 0.0.1
+	ajsf 0.0.1-20211101
 
 	https://github.com/tvrzna/ajsf
 **/
 Ajsf = {
-	init: function(app, el) {
+	init: function(app, el, id) {
 		el.find('[ajsf-bind]').each(function(i, e) {
 			var $e = $(e);
 			var attr = $e.attr('ajsf-bind');
@@ -60,7 +60,7 @@ Ajsf = {
 			createEvent(attrEvent);
 		}
 
-		Ajsf.refresh(app, el);
+		Ajsf.refresh(app, el, undefined, id);
 	},
 	basicEvents: {
 		'ajsf-blur': 'blur',
@@ -217,10 +217,24 @@ Ajsf = {
 				return value;
 		}
 	},
-	refresh: function(app, el, attr) {
+	randomString: function(length) {
+		var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+		var str = '';
+		for (let i = 0; i < length; i++) {
+			str += chars.charAt(Math.floor(Math.random() * chars.length));
+		}
+
+		return str;
+	},
+	refresh: function(app, el, attr, id) {
 		var prefix = ':not([ajsf-repeated]) > ';
 		if (el.is('[ajsf-repeated]')) {
 			prefix = '';
+			if (id !== undefined) {
+				prefix = '[ajsf-repeated="' + id + '"]';
+				el = el.parent();
+			}
 		}
 
 		var suffix = '';
@@ -281,9 +295,11 @@ Ajsf = {
 			}
 		});
 
-		el.find(prefix + '[ajsf-repeated' + suffix +']').each(function(i, e) {
-			$(e).remove();
-		});
+		if (id === undefined) {
+			el.find(prefix + '[ajsf-repeated' + suffix +']').each(function(i, e) {
+				$(e).remove();
+			});
+		}
 
 		el.find(prefix + '[ajsf-title' + suffix + ']').each(function(i, e) {
 			var $e = $(e);
@@ -302,9 +318,11 @@ Ajsf = {
 				customAttr = $e.attr('ajsf-repeat');
 			}
 			var arr = Ajsf.digObject(app, customAttr);
+			var isOption = $e.prop('tagName') === 'OPTION';
 			if (arr !== undefined) {
 				for (var item in arr) {
-					var $clone = $e.clone().removeAttr('ajsf-repeat').attr('ajsf-repeated', 'true').show().insertBefore($e);
+					var identifier = Ajsf.randomString(6);
+					var $clone = $e.clone().removeAttr('ajsf-repeat').attr('ajsf-repeated', isOption ? identifier : 'true').show().insertBefore($e);
 
 					var subapp = {
 						context: {
@@ -318,8 +336,17 @@ Ajsf = {
 						attributes: app.attributes
 					};
 
-					subapp.context.item.index = item;
-					Ajsf.init(subapp, $clone);
+					if (typeof subapp.context.item === 'string') {
+						subapp.context.item.index = item;
+					}
+					Ajsf.init(subapp, $clone, isOption ? identifier : undefined);
+				}
+				if (isOption) {
+					var $parent = $e.parent();
+					if ($parent.attr('ajsf-bind')) {
+						var attr = $parent.attr('ajsf-bind');
+						Ajsf.setVal($parent[0], Ajsf.digObject(app, attr));
+					}
 				}
 			}
 		});
