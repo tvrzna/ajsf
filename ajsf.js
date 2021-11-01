@@ -349,7 +349,7 @@ Ajsf = {
 						attributes: app.attributes
 					};
 
-					if (typeof subapp.context.item === 'string') {
+					if (typeof subapp.context.item === 'object') {
 						subapp.context.item.index = item;
 					}
 					Ajsf.init(subapp, $clone, isOption ? identifier : undefined);
