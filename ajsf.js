@@ -149,7 +149,7 @@ Ajsf = {
 			}
 
 			if (typeof result === 'function' && !addArgs && isFunction) {
-				result = result(args);
+				result = result(...args);
 			}
 
 			if (negative) {
