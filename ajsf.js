@@ -1,5 +1,5 @@
 /**
-	ajsf 0.0.1-20211101
+	ajsf 0.0.1-20211103
 
 	https://github.com/tvrzna/ajsf
 **/
@@ -113,6 +113,9 @@ Ajsf = {
 				while((match = argRegex.exec(strArgs)) != null)
 				{
 					var fce = Ajsf.digObject(app, match[1], val, true);
+					if (fce === undefined) {
+						continue;
+					}
 					if (typeof fce[0] === 'function') {
 						args.push(fce[0](...fce[1]));
 					} else {
