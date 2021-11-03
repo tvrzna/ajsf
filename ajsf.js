@@ -96,7 +96,7 @@ Ajsf = {
 			}
 
 			while (attribute.startsWith('parent().')) {
-				attribute = expression[0].substring(9).trim();
+				attribute = attribute.substring(9).trim();
 				if (typeof obj.parent === 'function') {
 					obj = obj.parent();
 				}
