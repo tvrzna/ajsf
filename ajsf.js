@@ -1,5 +1,5 @@
 /**
-	ajsf 0.0.1-20211103
+	ajsf 0.0.1-20211105
 
 	https://github.com/tvrzna/ajsf
 **/
@@ -228,6 +228,26 @@ Ajsf = {
 				return param + value;
 			case 'suffix':
 				return value + param;
+			case 'filter':
+				if (typeof value === 'object' && ('' + value.constructor).toString().indexOf('Array') > 0) {
+					var result = [];
+					for (var i in value) {
+						var val = value[i];
+						if (typeof val === 'string') {
+							if (val === param) {
+								result.push(val);
+							}
+						} else if (typeof val === 'object') {
+							for (var attr in param) {
+								if (val[attr] === param[attr]) {
+									result.push(val);
+								}
+							}
+						}
+					}
+					return result;
+				}
+				return value;
 			default:
 				console.warn('Filter ' + method + ' is not implemented yet.')
 				return value;
