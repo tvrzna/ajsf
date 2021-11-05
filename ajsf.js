@@ -72,6 +72,9 @@ Ajsf = {
 		'ajsf-mouseup': 'mouseup',
 		'ajsf-submit': 'submit'
 	},
+	convertToObject: function(str) {
+		return JSON.parse(JSON.stringify(eval('(' + str + ')')));
+	},
 	digObject: function(app, attr, val, addArgs) {
 		var expression = attr.split('|');
 
@@ -184,12 +187,13 @@ Ajsf = {
 		expression = expression.replace(/\s\s+/g, ' ');
 		method = expression.split(' ')[0];
 
-
 		if (expression.indexOf(' ') > 0) {
 			param = expression.substring(expression.indexOf(' ')).trim();
 			if (param !== undefined) {
 				if ((param.startsWith('\'') && param.endsWith('\'')) || (param.startsWith('"') && param.endsWith('"'))) {
 					param = param.substring(1, param.length - 1);
+				} else if (param.startsWith('{') && param.endsWith('}')) {
+					param = Ajsf.convertToObject(param);
 				} else if (!isNaN(param)) {
 					param = Number(param);
 				} else {
@@ -316,7 +320,7 @@ Ajsf = {
 
 		el.find(prefix + '[ajsf-class]').each(function(i, e) {
 			var $e = $(e);
-			var cpyAttr = JSON.parse(JSON.stringify(eval('(' + $e.attr('ajsf-class') + ')')));
+			var cpyAttr = Ajsf.convertToObject($e.attr('ajsf-class'));
 
 			for (var styleClass in cpyAttr) {
 				var value = Ajsf.digObject(app, cpyAttr[styleClass]);
