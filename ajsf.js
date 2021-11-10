@@ -1,5 +1,5 @@
 /**
-	ajsf 0.0.1-20211105
+	ajsf 0.0.1-20211110
 
 	https://github.com/tvrzna/ajsf
 **/
@@ -98,6 +98,14 @@ Ajsf = {
 				negative = true;
 			}
 
+			if (attribute === 'false' || attribute === 'true') {
+				result = 'true' === attribute;
+				if (negative) {
+					result = !result;
+				}
+				return result;
+			}
+
 			while (attribute.startsWith('parent().')) {
 				attribute = attribute.substring(9).trim();
 				if (typeof obj.parent === 'function') {
@@ -121,6 +129,8 @@ Ajsf = {
 					}
 					if (typeof fce[0] === 'function') {
 						args.push(fce[0](...fce[1]));
+					} else if (typeof fce === 'boolean') {
+						args.push(fce);
 					} else {
 						args.push(fce[0]);
 					}
