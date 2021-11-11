@@ -1,5 +1,5 @@
 /**
-	ajsf 0.0.1-20211110
+	ajsf 0.0.1-20211111
 
 	https://github.com/tvrzna/ajsf
 **/
@@ -104,6 +104,13 @@ Ajsf = {
 					result = !result;
 				}
 				return result;
+			}
+
+			if (attribute.startsWith('root().')) {
+				attribute = attribute.substring(7).trim();
+				while (typeof obj.parent === 'function') {
+					obj = obj.parent();
+				}
 			}
 
 			while (attribute.startsWith('parent().')) {
