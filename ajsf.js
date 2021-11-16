@@ -483,16 +483,18 @@ Ajsf = {
 				});
 			}
 		}
-		for (var i = app.context.directiveInstances.length - 1; i >= 0; i--) {
-			if (app.context.directiveInstances[i] === undefined || (app.context.directiveInstances[i].element !== undefined && !document.body.contains(app.context.directiveInstances[i].element))) {
-				app.context.directiveInstances.splice(i, 1);
+		if (app.context.directiveInstances !== undefined && app.context.directiveInstances.length > 0) {
+			for (var i = app.context.directiveInstances.length - 1; i >= 0; i--) {
+				if (app.context.directiveInstances[i] === undefined || (app.context.directiveInstances[i].element !== undefined && !document.body.contains(app.context.directiveInstances[i].element))) {
+					app.context.directiveInstances.splice(i, 1);
+				}
 			}
-		}
-		for (var i in app.context.directiveInstances) {
-			if (app.context.directiveInstances[i] !== undefined && app.context.directiveInstances[i].context !== undefined) {
-				app.context.directiveInstances[i].context.refresh();
-			}
+			for (var i in app.context.directiveInstances) {
+				if (app.context.directiveInstances[i] !== undefined && app.context.directiveInstances[i].context !== undefined) {
+					app.context.directiveInstances[i].context.refresh();
+				}
 
+			}
 		}
 	},
 	getVal: function(e) {
