@@ -104,6 +104,8 @@ Ajsf = {
 					result = !result;
 				}
 				return result;
+			} else if (attribute === 'undefined') {
+				return undefined;
 			}
 
 			if (attribute.startsWith('root().')) {
