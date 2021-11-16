@@ -1,5 +1,5 @@
 /**
-	ajsf 0.0.1-20211111
+	ajsf 0.0.1-20211116
 
 	https://github.com/tvrzna/ajsf
 **/
@@ -459,15 +459,16 @@ Ajsf = {
 					},
 					directives: app.directives,
 					filters: app.filters,
-					attributes: app.attributes
+					attributes: app.attributes,
+					element: e
 				};
 
+				app.context.directiveInstances.push(subapp);
 				if (directive.definition !== undefined) {
 					subapp.context = Object.assign(subapp.context, directive.definition(subapp.context, e));
 				}
 				Ajsf.init(subapp, $e);
-				app.context.directiveInstances.push(subapp);
-			}
+			};
 
 			if (el.prop('tagName') === name.toUpperCase() && (el.attr('ajsf-repeat') !== null || el.attr('ajsf-repeated') !== null)) {
 				if (el.html() === '') {
@@ -482,10 +483,16 @@ Ajsf = {
 				});
 			}
 		}
+		for (var i = app.context.directiveInstances.length - 1; i >= 0; i--) {
+			if (app.context.directiveInstances[i] === undefined || (app.context.directiveInstances[i].element !== undefined && !document.body.contains(app.context.directiveInstances[i].element))) {
+				app.context.directiveInstances.splice(i, 1);
+			}
+		}
 		for (var i in app.context.directiveInstances) {
 			if (app.context.directiveInstances[i] !== undefined && app.context.directiveInstances[i].context !== undefined) {
 				app.context.directiveInstances[i].context.refresh();
 			}
+
 		}
 	},
 	getVal: function(e) {
