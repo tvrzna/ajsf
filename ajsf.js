@@ -82,6 +82,7 @@ Ajsf = {
 		var negative = false;
 		var isStatic = false;
 		var isFunction = false;
+		var isNumeric = false;
 		var result;
 		var args = [];
 
@@ -106,79 +107,84 @@ Ajsf = {
 				return result;
 			} else if (attribute === 'undefined') {
 				return undefined;
+			} else if (!isNaN(attribute)) {
+				result = Number(attribute);
+				isNumeric = true;
 			}
 
-			if (attribute.startsWith('root().')) {
-				attribute = attribute.substring(7).trim();
-				while (typeof obj.parent === 'function') {
-					obj = obj.parent();
-				}
-			}
-
-			while (attribute.startsWith('parent().')) {
-				attribute = attribute.substring(9).trim();
-				if (typeof obj.parent === 'function') {
-					obj = obj.parent();
-				}
-			}
-
-			if (attribute.indexOf('(') >= 0 && attribute.lastIndexOf(')') >= attribute.indexOf('(')) {
-				isFunction = true;
-				var strArgs = attribute.substring(attribute.indexOf('(') + 1, attribute.lastIndexOf(')'));
-				attribute = attribute.substring(0, attribute.indexOf('('));
-
-				var argRegex = /\s?(([^'"]+\(.*\))|([^'",]+)|\'([^']*)\'|\"([^"]*)\")\s?,?\s?/g;
-				var match;
-
-				while((match = argRegex.exec(strArgs)) != null)
-				{
-					var fce = Ajsf.digObject(app, match[1], val, true);
-					if (fce === undefined) {
-						continue;
-					}
-					if (typeof fce[0] === 'function') {
-						args.push(fce[0](...fce[1]));
-					} else if (typeof fce === 'boolean') {
-						args.push(fce);
-					} else {
-						args.push(fce[0]);
+			if (!isNumeric) {
+				if (attribute.startsWith('root().')) {
+					attribute = attribute.substring(7).trim();
+					while (typeof obj.parent === 'function') {
+						obj = obj.parent();
 					}
 				}
-			}
 
-			var indexRegex = /(.*?)\[([0-9]+)\]/g;
-			var arr = attribute.split('.'), i = 0;
+				while (attribute.startsWith('parent().')) {
+					attribute = attribute.substring(9).trim();
+					if (typeof obj.parent === 'function') {
+						obj = obj.parent();
+					}
+				}
 
-			for(; i < arr.length - 1; i++) {
+				if (attribute.indexOf('(') >= 0 && attribute.lastIndexOf(')') >= attribute.indexOf('(')) {
+					isFunction = true;
+					var strArgs = attribute.substring(attribute.indexOf('(') + 1, attribute.lastIndexOf(')'));
+					attribute = attribute.substring(0, attribute.indexOf('('));
+
+					var argRegex = /\s?(([^'"]+\(.*\))|([^'",]+)|\'([^']*)\'|\"([^"]*)\")\s?,?\s?/g;
+					var match;
+
+					while((match = argRegex.exec(strArgs)) != null)
+					{
+						var fce = Ajsf.digObject(app, match[1], val, true);
+						if (fce === undefined) {
+							continue;
+						}
+						if (typeof fce[0] === 'function') {
+							args.push(fce[0](...fce[1]));
+						} else if (typeof fce === 'boolean') {
+							args.push(fce);
+						} else {
+							args.push(fce[0]);
+						}
+					}
+				}
+
+				var indexRegex = /(.*?)\[([0-9]+)\]/g;
+				var arr = attribute.split('.'), i = 0;
+
+				for(; i < arr.length - 1; i++) {
+					var match = indexRegex.exec(arr[i]);
+					if (match !== null && obj[match[1]][match[2]] !== undefined) {
+						obj = obj[match[1]][match[2]];
+					} else if (obj[arr[i]] !== undefined) {
+						obj = obj[arr[i]];
+					}
+				}
+
 				var match = indexRegex.exec(arr[i]);
-				if (match !== null && obj[match[1]][match[2]] !== undefined) {
-					obj = obj[match[1]][match[2]];
-				} else if (obj[arr[i]] !== undefined) {
-					obj = obj[arr[i]];
+				if (match !== null) {
+					if (val !== undefined) {
+						obj[match[1]][match[2]] = val;
+						return;
+					}
+					result = obj[match[1]][match[2]];
+				} else {
+					if (val !== undefined) {
+						obj[arr[i]] = val;
+						return;
+					}
+					result = obj[arr[i]];
 				}
-			}
 
-			var match = indexRegex.exec(arr[i]);
-			if (match !== null) {
-				if (val !== undefined) {
-					obj[match[1]][match[2]] = val;
-					return;
+				if (typeof result === 'function' && !addArgs && isFunction) {
+					result = result(...args);
 				}
-				result = obj[match[1]][match[2]];
-			} else {
-				if (val !== undefined) {
-					obj[arr[i]] = val;
-					return;
+
+				if (negative) {
+					result = !result;
 				}
-				result = obj[arr[i]];
-			}
-
-			if (typeof result === 'function' && !addArgs && isFunction) {
-				result = result(...args);
-			}
-
-			if (negative) {
-				result = !result;
 			}
 		}
 
@@ -192,7 +198,6 @@ Ajsf = {
 				result = Ajsf.filter(app, expression[j].trim(), result);
 			}
 		}
-
 
 		return result;
 	},
