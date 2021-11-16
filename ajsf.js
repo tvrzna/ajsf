@@ -125,7 +125,7 @@ Ajsf = {
 				var strArgs = attribute.substring(attribute.indexOf('(') + 1, attribute.lastIndexOf(')'));
 				attribute = attribute.substring(0, attribute.indexOf('('));
 
-				var argRegex = /\s?(([^'"]+\(.*\))|([^'",]+)|\'([^']+)\'|\"([^"]+)\")\s?,?\s?/g;
+				var argRegex = /\s?(([^'"]+\(.*\))|([^'",]+)|\'([^']*)\'|\"([^"]*)\")\s?,?\s?/g;
 				var match;
 
 				while((match = argRegex.exec(strArgs)) != null)
