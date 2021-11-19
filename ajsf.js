@@ -1,5 +1,5 @@
 /**
-	ajsf 0.0.1-20211116
+	ajsf 0.0.1-20211119
 
 	https://github.com/tvrzna/ajsf
 **/
@@ -75,51 +75,37 @@ Ajsf = {
 	convertToObject: function(str) {
 		return JSON.parse(JSON.stringify(eval('(' + str + ')')));
 	},
-	digObject: function(app, attr, val, addArgs) {
-		var expression = attr.split('|');
+	digObject: function(app, attr, setValue, returnWithArguments) {
+		var expression = attr.match(/(([^\|]+)|([^\'\|]*\'[^\']*\'[^\'\|]+))/g);
 
-		var attribute = expression[0].trim();
 		var negative = false;
-		var isStatic = false;
-		var isFunction = false;
-		var isNumeric = false;
 		var result;
 		var args = [];
 
+		var attribute = expression[0].trim();
 		if ((attribute.startsWith('\'') && attribute.endsWith('\'')) || (attribute.startsWith('"') && attribute.endsWith('"'))) {
-			isStatic = true;
 			result = attribute.substring(1, attribute.length - 1);
-		}
-
-		if (!isStatic) {
-			var obj = app.context;
-
+		} else {
 			if (attribute.startsWith('!')) {
-				attribute = expression[0].substring(1).trim();
+				attribute = attribute.substring(1).trim();
 				negative = true;
 			}
 
 			if (attribute === 'false' || attribute === 'true') {
-				result = 'true' === attribute;
-				if (negative) {
-					result = !result;
-				}
-				return result;
+				result = attribute === 'true';
 			} else if (attribute === 'undefined') {
-				return undefined;
+				result = undefined;
 			} else if (!isNaN(attribute)) {
 				result = Number(attribute);
-				isNumeric = true;
-			}
+			} else {
+				var obj = app.context;
 
-			if (!isNumeric) {
 				if (attribute.startsWith('root().')) {
 					attribute = attribute.substring(7).trim();
 					while (typeof obj.parent === 'function') {
 						obj = obj.parent();
 					}
 				}
-
 				while (attribute.startsWith('parent().')) {
 					attribute = attribute.substring(9).trim();
 					if (typeof obj.parent === 'function') {
@@ -128,73 +114,67 @@ Ajsf = {
 				}
 
 				if (attribute.indexOf('(') >= 0 && attribute.lastIndexOf(')') >= attribute.indexOf('(')) {
-					isFunction = true;
 					var strArgs = attribute.substring(attribute.indexOf('(') + 1, attribute.lastIndexOf(')'));
 					attribute = attribute.substring(0, attribute.indexOf('('));
 
 					var argRegex = /\s?(([^'"]+\(.*\))|([^'",]+)|\'([^']*)\'|\"([^"]*)\")\s?,?\s?/g;
-					var match;
+					var matchFceArgs;
 
-					while((match = argRegex.exec(strArgs)) != null)
-					{
-						var fce = Ajsf.digObject(app, match[1], val, true);
-						if (fce === undefined) {
-							continue;
-						}
-						if (typeof fce[0] === 'function') {
-							args.push(fce[0](...fce[1]));
-						} else if (typeof fce === 'boolean') {
-							args.push(fce);
-						} else {
-							args.push(fce[0]);
-						}
+					while((matchFceArgs = argRegex.exec(strArgs)) !== null) {
+						var arg = Ajsf.digObject(app, matchFceArgs[1], setValue, true);
+						args.push(typeof arg[0] === 'function' ? arg[0](...arg[1]) : arg[0]);
 					}
 				}
 
-				var indexRegex = /(.*?)\[([0-9]+)\]/g;
-				var arr = attribute.split('.'), i = 0;
-
-				for(; i < arr.length - 1; i++) {
-					var match = indexRegex.exec(arr[i]);
-					if (match !== null && obj[match[1]][match[2]] !== undefined) {
-						obj = obj[match[1]][match[2]];
-					} else if (obj[arr[i]] !== undefined) {
-						obj = obj[arr[i]];
+				var indexRegex = /\[([^\]]*\]*)\]/g;
+				var attributes = attribute.split('.'), i = 0;
+				for (; i < attributes.length - 1; i++) {
+					var dataDots = attributes[i].substring(0, attributes[i].indexOf('['));
+					indexRegex.lastIndex = 0;
+					var matchDots = indexRegex.exec(attributes[i]);
+					if (matchDots !== null && matchDots[1] !== undefined) {
+						var indexDots = Ajsf.digObject(app, matchDots[1]);
+						obj = obj[dataDots][indexDots];
+					} else if (obj[attributes[i]] !== undefined) {
+						obj = obj[attributes[i]];
 					}
 				}
 
-				var match = indexRegex.exec(arr[i]);
-				if (match !== null) {
-					if (val !== undefined) {
-						obj[match[1]][match[2]] = val;
+				indexRegex.lastIndex = 0;
+				var match = indexRegex.exec(attributes[i]);
+				if (match !== null && match[1] !== undefined) {
+					var data = attributes[i].substring(0, attributes[i].indexOf('['));
+					var index = Ajsf.digObject(app, match[1]);
+					if (setValue !== undefined) {
+						obj[data][index] = setValue;
 						return;
 					}
-					result = obj[match[1]][match[2]];
+					result = obj[data][index];
 				} else {
-					if (val !== undefined) {
-						obj[arr[i]] = val;
+					if (setValue !== undefined) {
+						obj[attributes[i]] = setValue;
 						return;
 					}
-					result = obj[arr[i]];
-				}
-
-				if (typeof result === 'function' && !addArgs && isFunction) {
-					result = result(...args);
-				}
-
-				if (negative) {
-					result = !result;
+					result = obj[attributes[i]];
 				}
 			}
 		}
 
-		if (addArgs)
+		if (typeof result === 'function' && !returnWithArguments) {
+			result = result(...args);
+		}
+
+		if (negative) {
+			result = !result;
+		}
+
+		if (returnWithArguments)
 		{
 			return [result, args];
 		}
 
 		for (var j = 1; j < expression.length; j++) {
-			if (expression[j] != undefined) {
+			if (expression[j] !== undefined) {
 				result = Ajsf.filter(app, expression[j].trim(), result);
 			}
 		}
