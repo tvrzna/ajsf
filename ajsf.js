@@ -382,6 +382,13 @@ Ajsf = {
 							parent: function() {
 								return app.context;
 							},
+							root: function() {
+								var result = subapp.context;
+								while (typeof result.parent === 'function') {
+									result = result.parent();
+								}
+								return result;
+							},
 							item: arr[item]
 						},
 						directives: app.directives,
@@ -435,6 +442,13 @@ Ajsf = {
 						model: model,
 						parent: function() {
 							return app.context;
+						},
+						root: function() {
+							var result = subapp.context;
+							while (typeof result.parent === 'function') {
+								result = result.parent();
+							}
+							return result;
 						},
 						refresh: function(skipOnRefresh) {
 							if (!skipOnRefresh && typeof subapp.context.onRefresh === "function")
