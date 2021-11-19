@@ -236,6 +236,16 @@ Ajsf = {
 				return param + value;
 			case 'suffix':
 				return value + param;
+			case 'then':
+				if (value) {
+					return param;
+				}
+				return value;
+			case 'else':
+				if (!value) {
+					return param;
+				}
+				return value;
 			case 'filter':
 				if (typeof value === 'object' && ('' + value.constructor).toString().indexOf('Array') > 0) {
 					var result = [];
@@ -347,7 +357,11 @@ Ajsf = {
 				var value = Ajsf.digObject(app, cpyAttr[style]);
 
 				$e.each(function(j, jel) {
-					jel.style[style] = value;
+					if (value) {
+						jel.style[style] = value;
+					} else {
+						jel.style[style] = '';
+					}
 				});
 			}
 		});
