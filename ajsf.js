@@ -339,6 +339,19 @@ Ajsf = {
 			}
 		});
 
+		el.find(prefix + '[ajsf-style]').each(function(i, e) {
+			var $e = $(e);
+			var cpyAttr = Ajsf.convertToObject($e.attr('ajsf-style'));
+
+			for (var style in cpyAttr) {
+				var value = Ajsf.digObject(app, cpyAttr[style]);
+
+				$e.each(function(j, jel) {
+					jel.style[style] = value;
+				});
+			}
+		});
+
 		if (id === undefined) {
 			el.find(prefix + '[ajsf-repeated' + suffix +']').each(function(i, e) {
 				$(e).remove();
