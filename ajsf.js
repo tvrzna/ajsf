@@ -1,5 +1,5 @@
 /**
-	ajsf 0.0.1-20211119
+	ajsf 0.0.1-20211201
 
 	https://github.com/tvrzna/ajsf
 **/
@@ -117,7 +117,7 @@ Ajsf = {
 					var strArgs = attribute.substring(attribute.indexOf('(') + 1, attribute.lastIndexOf(')'));
 					attribute = attribute.substring(0, attribute.indexOf('('));
 
-					var argRegex = /\s?(([^'"]+\(.*\))|([^'",]+)|\'([^']*)\'|\"([^"]*)\")\s?,?\s?/g;
+					var argRegex = /\s?(([^'",]+)|([^'"]+\(.*\))|\'([^']*)\'|\"([^"]*)\")\s?,?\s?/g;
 					var matchFceArgs;
 
 					while((matchFceArgs = argRegex.exec(strArgs)) !== null) {
