@@ -113,9 +113,11 @@ Ajsf = {
 					}
 				}
 
-				if (attribute.indexOf('(') >= 0 && attribute.lastIndexOf(')') >= attribute.indexOf('(')) {
-					var strArgs = attribute.substring(attribute.indexOf('(') + 1, attribute.lastIndexOf(')'));
-					attribute = attribute.substring(0, attribute.indexOf('('));
+				var argsRegex = /^(([^'\.\(\)\[\]]+)\((.*)\))/g;
+				var argsMatch = argsRegex.exec(attribute);
+				if (argsMatch !== null && argsMatch[0] !== undefined) {
+					var strArgs = argsMatch[3];
+					attribute = argsMatch[2];
 
 					var argRegex = /\s?(([^'",]+)|([^'"]+\(.*\))|\'([^']*)\'|\"([^"]*)\")\s?,?\s?/g;
 					var matchFceArgs;
