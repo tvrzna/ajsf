@@ -113,7 +113,7 @@ Ajsf = {
 					}
 				}
 
-				var argsRegex = /^(([^'\.\(\)\[\]]+)\((.*)\))/g;
+				var argsRegex = /(([^'\.\(\)\[\]]+)\((([^\)]*\'[^\']*\'[^\)]*)|([^\']*))\))/g;
 				var argsMatch = argsRegex.exec(attribute);
 				if (argsMatch !== null && argsMatch[0] !== undefined) {
 					var strArgs = argsMatch[3];
