@@ -15,21 +15,21 @@ Ajsf = {
 			if ($e.prop('tagName') === 'INPUT' || $e.prop('tagName') === 'TEXTAREA' || $e.prop('tagName') === 'SELECT') {
 				var event;
 				if ($e.prop('tagName') === 'TEXTAREA') {
-					event = "input";
+					event = 'input';
 				} else {
 					switch ($e.prop('type')) {
-						case "text":
-						case "password":
-						case "email":
-						case "url":
-						case "search":
-						case "number":
-							event = "input";
+						case 'text':
+						case 'password':
+						case 'email':
+						case 'url':
+						case 'search':
+						case 'number':
+							event = 'input';
 							break;
-						case "submit":
+						case 'submit':
 							break;
 						default:
-							event = "change";
+							event = 'change';
 					}
 				}
 
@@ -83,7 +83,7 @@ Ajsf = {
 		var args = [];
 
 		var attribute = expression[0].trim();
-		if ((attribute.startsWith('\'') && attribute.endsWith('\'')) || (attribute.startsWith('"') && attribute.endsWith('"'))) {
+		if ((attribute.startsWith('\'') && attribute.endsWith('\''))) {
 			result = attribute.substring(1, attribute.length - 1);
 		} else {
 			if (attribute.startsWith('!')) {
@@ -119,7 +119,7 @@ Ajsf = {
 					var strArgs = argsMatch[3];
 					attribute = argsMatch[2];
 
-					var argRegex = /\s?(([^'",]+)|([^'"]+\(.*\))|\'([^']*)\'|\"([^"]*)\")\s?,?\s?/g;
+					var argRegex = /\s?([^',]+|([^']+\(.*\))|\'([^']*)\')\s?,?\s?/g;
 					var matchFceArgs;
 
 					while((matchFceArgs = argRegex.exec(strArgs)) !== null) {
@@ -196,7 +196,7 @@ Ajsf = {
 		if (expression.indexOf(' ') > 0) {
 			param = expression.substring(expression.indexOf(' ')).trim();
 			if (param !== undefined) {
-				if ((param.startsWith('\'') && param.endsWith('\'')) || (param.startsWith('"') && param.endsWith('"'))) {
+				if ((param.startsWith('\'') && param.endsWith('\''))) {
 					param = param.substring(1, param.length - 1);
 				} else if (param.startsWith('{') && param.endsWith('}')) {
 					param = Ajsf.convertToObject(param);
@@ -480,7 +480,7 @@ Ajsf = {
 							return result;
 						},
 						refresh: function(skipOnRefresh) {
-							if (!skipOnRefresh && typeof subapp.context.onRefresh === "function")
+							if (!skipOnRefresh && typeof subapp.context.onRefresh === 'function')
 							{
 								subapp.context.onRefresh();
 							}
@@ -530,9 +530,9 @@ Ajsf = {
 	getVal: function(e) {
 		var $e = $(e);
 		switch ($e.prop('type')) {
-			case "checkbox":
+			case 'checkbox':
 				return $e.prop('checked');
-			case "radio":
+			case 'radio':
 				var attr = $e.attr('ajsf-bind');
 				var arr = $('input[ajsf-bind=' + attr +'][type=radio]');
 				for (var i = 0; i <= arr.length; i++) {
@@ -550,10 +550,10 @@ Ajsf = {
 		var $e = $(e);
 		if ($e.prop('tagName') === 'INPUT') {
 			switch ($e.prop('type')) {
-				case "checkbox":
+				case 'checkbox':
 					$e.prop('checked', value);
 					break;
-				case "radio":
+				case 'radio':
 					$e.prop('checked', e.value == value);
 					break;
 				default:
