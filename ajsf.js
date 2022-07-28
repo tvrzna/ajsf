@@ -1,5 +1,5 @@
 /**
-	ajsf 0.0.1-20211201
+	ajsf 0.0.1-20220728
 
 	https://github.com/tvrzna/ajsf
 **/
@@ -258,8 +258,11 @@ Ajsf = {
 								result.push(val);
 							}
 						} else if (typeof val === 'object') {
+							if (!Object.keys(param).length) {
+								result.push(val);
+							}
 							for (var attr in param) {
-								if (val[attr] === param[attr]) {
+								if (param[attr] === undefined || val[attr] === param[attr]) {
 									result.push(val);
 								}
 							}
