@@ -1,5 +1,5 @@
 /**
-	ajsf 0.0.1-20220728
+	ajsf 0.0.1-20230614
 
 	https://github.com/tvrzna/ajsf
 **/
@@ -607,6 +607,8 @@ window.ajsf = function(selector, definition) {
 	};
 
 	instance.context = Object.assign(instance.context, definition(instance.context));
+
+	instance.context.rootElement = root[0];
 
 	$(document).ready(function() {
 		Ajsf.init(instance, root);
