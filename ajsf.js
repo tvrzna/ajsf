@@ -1,5 +1,5 @@
 /**
-	ajsf 0.0.1-20230614
+	ajsf 0.0.1-20230822
 
 	https://github.com/tvrzna/ajsf
 **/
@@ -577,7 +577,9 @@ window.ajsf = function(selector, definition) {
 	var root = $('[ajsf="' + selector + '"]');
 
 	var instance = {
-		context: {},
+		context: {
+			rootElement = root[0]
+		},
 		directives: {},
 		directive: function(name, template, definition) {
 			this.directives[name] = {
@@ -606,7 +608,7 @@ window.ajsf = function(selector, definition) {
 		Ajsf.refresh(instance, root);
 	};
 
-	instance.context = Object.assign(instance.context, definition(instance.context));
+	instance.context = Object.assign(instance.context, definition(instance.context, root[0]));
 
 	instance.context.rootElement = root[0];
 
